@@ -84,8 +84,7 @@ def check_response(response):
 
 
 def parse_status(homework):
-    """Извлекает из информации о конкретной домашней работе статус этой
-    работы."""
+    """Извлекает из информации о домашней работе статус этой работы."""
     if 'homework_name' not in homework:
         raise KeyError('Отсутствует ключ homework_name в ответе API')
     if 'status' not in homework:
@@ -111,7 +110,6 @@ def check_tokens():
 
 def main():
     """Основная логика работы бота."""
-
     try:
         check_tokens()
     except Exception as error:
