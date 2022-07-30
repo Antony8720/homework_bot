@@ -107,7 +107,7 @@ def check_tokens():
         logger.critical('Отсутствуют обязательные переменные окружения')
         return False
 
-
+# flake8: noqa: C901
 def main():
     """Основная логика работы бота."""
     logging.basicConfig(
