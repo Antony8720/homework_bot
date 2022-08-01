@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 import time
 from http import HTTPStatus
 
@@ -9,7 +10,6 @@ from dotenv import load_dotenv
 
 from exceptions import (EndpointUnavailable, EnvironmentVariableError,
                         JsonError, SendingMessageError, UnknownStatus)
-
 
 load_dotenv()
 
@@ -71,10 +71,10 @@ def check_response(response):
     """Проверяет ответ API на корректность."""
     if not isinstance(response, dict):
         raise TypeError('Ответ API не является словарем')
-    try:
-        homeworks = response['homeworks']
-    except KeyError:
+    if 'homeworks' not in response:
         raise KeyError('В словаре отсутсвует ключ homeworks')
+    else:
+        homeworks = response['homeworks']
     try:
         homework = homeworks[0]
     except IndexError:
@@ -99,13 +99,9 @@ def parse_status(homework):
 
 def check_tokens():
     """Проверяет доступность переменных окружения."""
-    if all([TELEGRAM_TOKEN,
+    return all([TELEGRAM_TOKEN,
            TELEGRAM_CHAT_ID,
-           PRACTICUM_TOKEN]):
-        return True
-    else:
-        logger.critical('Отсутствуют обязательные переменные окружения')
-        return False
+           PRACTICUM_TOKEN])
 
 # flake8: noqa: C901
 def main():
@@ -118,8 +114,8 @@ def main():
         filemode='w'
     )
     if not check_tokens():
-        logging.critical('Отсутствует переменная окружения!')
-        raise EnvironmentVariableError('Отсутствует переменная окружения')
+        logger.critical('Отсутствует переменная окружения!')
+        sys.exit('Отсутствует переменная окружения')
     check_duplication = ''
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     current_timestamp = int(time.time())
